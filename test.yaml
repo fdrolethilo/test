@@ -1,0 +1,1434 @@
+spec:
+    data:
+        openapi: 3.0.0
+        info:
+            title: Sinopé Technologies Inc. API - Cloud to cloud
+            description: >-
+                This is the Sinopé Technologies Inc. web server home assistant API documentation for our third party partner's.
+
+                Important: please note that the {partnerName} in paths will be given to you during the process.
+
+                Confidentiality notice: This document is confidential and contains proprietary information and intellectual property of Sinopé Technologies Inc. Neither this document nor any 
+                of the information contained herein may be reproduced or disclosed under any circumstances without the express written permission of Sinopé Technologies Inc.
+
+                Please be aware that disclosure, copying or distribution of this document and the information contained therein is strictly prohibited.
+            license:
+                name: Sinope Technologies Inc.
+                url: 'https://www.sinopetech.com/'
+            contact: {}
+            version: 1.0.2
+        servers:
+            - 
+                url: 'https://preprod-homeassistant.sinopetech.com/api/smarthome'
+                description: Staging server
+            - 
+                url: 'https://homeassistant.sinopetech.com/api/smarthome'
+                description: Production server
+        security:
+            - 
+                AuthorizationTypeBearerToken: []
+        tags:
+            - 
+                name: query
+                description: To query device(s) states.
+            - 
+                name: sync
+                description: To sync devices.
+            - 
+                name: execute
+                description: To execute command(s).
+        x-tagGroups:
+            $ref: ./x_tag_groups.json
+        components:
+            securitySchemes:
+                AuthorizationTypeBearerToken:
+                    type: apiKey
+                    in: header
+                    name: 'Authorization type: Bearer Token'
+                    description: >-
+                        <p>
+
+                        The access ID received from the oauth token exchange must
+                        be inserted in every request.
+
+                        </p>
+
+
+
+                        <h3>Using an access ID</h3>
+
+                        <p>
+
+                        Pass the access ID into a REST API call as a header
+                        parameter with the following format. Replace
+                        <b>ACCESS_ID</b> with your access ID,
+
+
+
+                        <pre>Authorization: <span style='color:#14B1E7'>Bearer
+                        ACCESS_ID</span></pre></p>
+        paths:
+            '/{partnerName}     (sync)':
+                post:
+                    tags:
+                        - sync
+                    summary: sync device(s)
+                    description: Sync device(s)
+                    operationId: Sync
+                    requestBody:
+                        description: ''
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    properties:
+                                        intent:
+                                            required: true
+                                            type: string
+                                            enum:
+                                                - sync
+                    parameters:
+                        - 
+                            in: header
+                            name: Content-Type
+                            required: true
+                            style: simple
+                            explode: false
+                            schema:
+                                type: string
+                                enum:
+                                    - application/json
+                            description: MIME type of the request body
+                    responses:
+                        '200':
+                            description: ''
+                            content:
+                                application/json:
+                                    schema:
+                                        title: SyncResponse
+                                        type: object
+                                        properties:
+                                            agentUserId:
+                                                type: string
+                                                description: 'The combined account ID and user ID, separated by a "-". You should save this info to relate sync requests to the user. For more information, see the request sync call in the HTTPS Push documentation.'
+                                                example: 1234-5678
+                                            devices:
+                                                type: object
+                                                properties:
+                                                    '1':
+                                                        type: object
+                                                        properties:
+                                                            resource:
+                                                                type: string
+                                                                description: The resource type of the device
+                                                                enum:
+                                                                    - thermostat
+                                                                    - lightswitch
+                                                                    - loadcontroller
+                                                                    - heatpump
+                                                                    - outlet
+                                                                    - sensor
+                                                                    - valve
+                                                                example: thermostat
+                                                            identifier:
+                                                                type: string
+                                                                description: The unique identifier of the device
+                                                                example: e0e1e1fffe1e14fc
+                                                            name:
+                                                                type: string
+                                                                description: The name of the device
+                                                                example: My Thermostat
+                                                            signature:
+                                                                type: object
+                                                                properties:
+                                                                    model:
+                                                                        type: number
+                                                                        description: The model of the device
+                                                                        example: 742
+                                                                    modelCfg:
+                                                                        type: number
+                                                                        description: The model configuration version of the device
+                                                                        example: 0
+                                                                    softBuildCfg:
+                                                                        type: number
+                                                                        description: The software configuration version of the device
+                                                                        example: 0
+                                                                    softVersion:
+                                                                        type: object
+                                                                        properties:
+                                                                            major:
+                                                                                type: number
+                                                                                description: The major version of the software
+                                                                                example: 1
+                                                                            middle:
+                                                                                type: number
+                                                                                description: The middle version of the software
+                                                                                example: 0
+                                                                            minor:
+                                                                                type: number
+                                                                                description: The minor version of the software
+                                                                                example: 0
+                                                            location$id:
+                                                                type: number
+                                                                description: The location id of the device
+                                                                example: 1
+                                                            parentDevice$id:
+                                                                type: number
+                                                                description: The parent device id of the device
+                                                                example: null
+                                                            locationName:
+                                                                type: string
+                                                                description: The location name of the device
+                                                                example: My Home
+                                                            roomName:
+                                                                type: string
+                                                                description: The room name of the device
+                                                                example: Living Room
+                                            scenes:
+                                                type: object
+                                                properties:
+                                                    '1':
+                                                        type: object
+                                                        properties:
+                                                            resource:
+                                                                type: string
+                                                                description: The resource type
+                                                                example: scene
+                                                            name:
+                                                                type: string
+                                                                description: The name of the scene
+                                                                example: Good Morning
+            '/{partnerName}     (query)':
+                post:
+                    tags:
+                        - query
+                    summary: query device(s) attributes
+                    description: Get the device(s) attributes
+                    operationId: Query
+                    requestBody:
+                        description: ''
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    oneOf:
+                                        - 
+                                            title: device
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    type: string
+                                                    enum:
+                                                        - query
+                                                    example: query
+                                                device:
+                                                    type: object
+                                                    properties:
+                                                        ids:
+                                                            type: array
+                                                            description: Device ids
+                                                            items:
+                                                                type: string
+                                                            example:
+                                                                - '1'
+                                                                - '2'
+                                        - 
+                                            title: scene
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    type: string
+                                                    enum:
+                                                        - query
+                                                    example: query
+                                                scene:
+                                                    type: object
+                                                    properties:
+                                                        ids:
+                                                            type: array
+                                                            description: Scene ids
+                                                            items:
+                                                                type: string
+                                                            example:
+                                                                - '1'
+                                                                - '2'
+                                        - 
+                                            title: device and scene
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    type: string
+                                                    enum:
+                                                        - query
+                                                    example: query
+                                                device:
+                                                    type: object
+                                                    properties:
+                                                        ids:
+                                                            type: array
+                                                            description: Device ids
+                                                            items:
+                                                                type: string
+                                                            example:
+                                                                - '1'
+                                                                - '2'
+                                                scene:
+                                                    type: object
+                                                    properties:
+                                                        ids:
+                                                            type: array
+                                                            description: Scene ids
+                                                            items:
+                                                                type: string
+                                                            example:
+                                                                - '1'
+                    parameters:
+                        - 
+                            in: header
+                            name: Content-Type
+                            required: true
+                            style: simple
+                            explode: false
+                            schema:
+                                type: string
+                                enum:
+                                    - application/json
+                            description: MIME type of the request body
+                    responses:
+                        '200':
+                            description: ''
+                            content:
+                                application/json:
+                                    schema:
+                                        oneOf:
+                                            - 
+                                                title: QueryResponse
+                                                type: object
+                                                properties:
+                                                    devices:
+                                                        type: object
+                                                        properties:
+                                                            '1':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ERROR
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - thermostat
+                                                                            - lightswitch
+                                                                            - loadcontroller
+                                                                            - heatpump
+                                                                            - outlet
+                                                                            - sensor
+                                                                            - valve
+                                                                        example: thermostat
+                                                                    code:
+                                                                        type: string
+                                                                        description: Error code
+                                                                        enum:
+                                                                            - DVCUNVLB
+                                                                        example: DVCUNVLB
+                                                                    message:
+                                                                        type: string
+                                                                        description: Error message
+                                                                        example: Device is disconnected
+                                                            '2':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ONLINE
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - thermostat
+                                                                            - lightswitch
+                                                                            - loadcontroller
+                                                                            - heatpump
+                                                                            - outlet
+                                                                            - sensor
+                                                                            - valve
+                                                                        example: thermostat
+                                                                    states:
+                                                                        type: object
+                                                                        properties:
+                                                                            heatSetpoint:
+                                                                                type: number
+                                                                                description: heat setpoint
+                                                                                example: 22
+                                                                            roomTemperatureDisplay:
+                                                                                type: number
+                                                                                description: Room temperature value
+                                                                                example: 22
+                                                                            setpointMode:
+                                                                                type: string
+                                                                                description: Setpoint mode
+                                                                                enum:
+                                                                                    - auto
+                                                                                    - manual
+                                                                                example: auto
+                                                                            outputPercentDisplay:
+                                                                                type: number
+                                                                                description: Output percent value
+                                                                                example: 0
+                                                                            heatSetpointMax:
+                                                                                type: number
+                                                                                description: Heat setpoint max
+                                                                                example: 30
+                                                                            heatSetpointMin:
+                                                                                type: number
+                                                                                description: Heat setpoint min
+                                                                                example: 15
+                                                                            temperatureFormat:
+                                                                                type: string
+                                                                                description: Temperature format
+                                                                                enum:
+                                                                                    - celsius
+                                                                                    - fahrenheit
+                                                                                example: celsius
+                                                            '3':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ONLINE
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - thermostat
+                                                                            - lightswitch
+                                                                            - loadcontroller
+                                                                            - heatpump
+                                                                            - outlet
+                                                                            - sensor
+                                                                            - valve
+                                                                        example: lightswitch
+                                                                    states:
+                                                                        type: object
+                                                                        properties:
+                                                                            onOff:
+                                                                                type: string
+                                                                                description: On/Off status
+                                                                                example: 'on'
+                                                                            intensity:
+                                                                                type: number
+                                                                                description: Intensity of the light
+                                                                                example: 15
+                                                            '4':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ONLINE
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - thermostat
+                                                                            - lightswitch
+                                                                            - loadcontroller
+                                                                            - heatpump
+                                                                            - outlet
+                                                                            - sensor
+                                                                            - valve
+                                                                        example: loadcontroller
+                                                                    states:
+                                                                        type: object
+                                                                        properties:
+                                                                            onOff:
+                                                                                type: string
+                                                                                description: On/Off status
+                                                                                example: 'on'
+                                                    scenes:
+                                                        type: object
+                                                        properties:
+                                                            '1':
+                                                                type: object
+                                                                description: Scene id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the scene
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - READY
+                                                                        example: READY
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the scene
+                                                                        enum:
+                                                                            - scene
+                                                                        example: scene
+                                                                    name:
+                                                                        type: string
+                                                                        description: Name of the scene
+                                                                        example: Good Morning
+                                            - 
+                                                title: Thermostat query response
+                                                type: object
+                                                properties:
+                                                    devices:
+                                                        type: object
+                                                        properties:
+                                                            '1':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ONLINE
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - thermostat
+                                                                        example: thermostat
+                                                                    states:
+                                                                        type: object
+                                                                        properties:
+                                                                            heatSetpoint:
+                                                                                type: number
+                                                                                description: heat setpoint
+                                                                                example: 22
+                                                                            roomTemperatureDisplay:
+                                                                                type: number
+                                                                                description: Room temperature value
+                                                                                example: 22
+                                                                            setpointMode:
+                                                                                type: string
+                                                                                description: Setpoint mode
+                                                                                enum:
+                                                                                    - auto
+                                                                                    - manual
+                                                                                    - 'off'
+                                                                                example: auto
+                                                                            outputPercentDisplay:
+                                                                                type: number
+                                                                                description: Output percent value
+                                                                                example: 0
+                                                                            heatSetpointMax:
+                                                                                type: number
+                                                                                description: Heat setpoint max
+                                                                                example: 30
+                                                                            heatSetpointMin:
+                                                                                type: number
+                                                                                description: Heat setpoint min
+                                                                                example: 15
+                                                                            temperatureFormat:
+                                                                                type: string
+                                                                                description: Temperature format
+                                                                                enum:
+                                                                                    - celsius
+                                                                                    - fahrenheit
+                                                                                example: celsius
+                                            - 
+                                                title: Dimmer query response
+                                                type: object
+                                                properties:
+                                                    devices:
+                                                        type: object
+                                                        properties:
+                                                            '1':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ONLINE
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - dimmer
+                                                                        example: dimmer
+                                                                    states:
+                                                                        type: object
+                                                                        properties:
+                                                                            onOff:
+                                                                                type: string
+                                                                                description: On/Off status
+                                                                                enum:
+                                                                                    - 'on'
+                                                                                    - 'off'
+                                                                                example: 'on'
+                                                                            intensity:
+                                                                                type: number
+                                                                                description: Intensity of the light
+                                                                                example: 15
+                                            - 
+                                                title: Lightswitch query response
+                                                type: object
+                                                properties:
+                                                    devices:
+                                                        type: object
+                                                        properties:
+                                                            '1':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ONLINE
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - lightswitch
+                                                                        example: lightswitch
+                                                                    states:
+                                                                        type: object
+                                                                        properties:
+                                                                            onOff:
+                                                                                type: string
+                                                                                description: On/Off status
+                                                                                enum:
+                                                                                    - 'on'
+                                                                                    - 'off'
+                                                                                example: 'on'
+                                            - 
+                                                title: Loadcontroller query response
+                                                type: object
+                                                properties:
+                                                    devices:
+                                                        type: object
+                                                        properties:
+                                                            '1':
+                                                                type: object
+                                                                description: Device id
+                                                                properties:
+                                                                    status:
+                                                                        type: string
+                                                                        description: Status of the device
+                                                                        enum:
+                                                                            - ERROR
+                                                                            - ONLINE
+                                                                            - OFFLINE
+                                                                        example: ONLINE
+                                                                    resource:
+                                                                        type: string
+                                                                        description: Resource type of the device
+                                                                        enum:
+                                                                            - loadcontroller
+                                                                        example: loadcontroller
+                                                                    states:
+                                                                        type: object
+                                                                        properties:
+                                                                            onOff:
+                                                                                type: string
+                                                                                description: On/Off status
+                                                                                enum:
+                                                                                    - 'on'
+                                                                                    - 'off'
+                                                                                example: 'on'
+            '/{partnerName}     (execute)':
+                post:
+                    tags:
+                        - execute
+                    summary: execute device(s) commands
+                    description: Set the device(s) attributes
+                    operationId: Execute
+                    requestBody:
+                        description: ''
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    oneOf:
+                                        - 
+                                            title: heatSetpoint
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    required: true
+                                                    type: string
+                                                    description: Intent
+                                                    enum:
+                                                        - device.execute
+                                                    example: device.execute
+                                                commands:
+                                                    type: array
+                                                    items:
+                                                        type: object
+                                                        properties:
+                                                            commandRefId:
+                                                                type: string
+                                                                description: Command reference ID
+                                                                example: '1'
+                                                            ids:
+                                                                type: array
+                                                                description: Device ids
+                                                                items:
+                                                                    type: string
+                                                                    description: Device id
+                                                                example:
+                                                                    - '23'
+                                                            execution:
+                                                                type: array
+                                                                items:
+                                                                    type: object
+                                                                    properties:
+                                                                        command:
+                                                                            type: string
+                                                                            description: Command to be executed
+                                                                            enum:
+                                                                                - action.devices.commands.heatSetpoint
+                                                                            example: action.devices.commands.heatSetpoint
+                                                                        params:
+                                                                            type: object
+                                                                            example:
+                                                                                heatSetpoint: 22
+                                                                            properties:
+                                                                                heatSetpoint:
+                                                                                    type: number
+                                                                                    description: Temperature heat setpoint of the device
+                                        - 
+                                            title: setpointMode
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    required: true
+                                                    type: string
+                                                    description: Intent
+                                                    enum:
+                                                        - device.execute
+                                                    example: device.execute
+                                                commands:
+                                                    type: array
+                                                    items:
+                                                        type: object
+                                                        properties:
+                                                            commandRefId:
+                                                                type: string
+                                                                description: Command reference ID
+                                                                example: '1'
+                                                            ids:
+                                                                type: array
+                                                                description: Device ids
+                                                                items:
+                                                                    type: string
+                                                                    description: Device id
+                                                                example:
+                                                                    - '23'
+                                                            execution:
+                                                                type: array
+                                                                items:
+                                                                    type: object
+                                                                    properties:
+                                                                        command:
+                                                                            type: string
+                                                                            description: Command to be executed
+                                                                            enum:
+                                                                                - action.devices.commands.setpointMode
+                                                                            example: action.devices.commands.setpointMode
+                                                                        params:
+                                                                            type: object
+                                                                            example:
+                                                                                setpointMode: manual
+                                                                            properties:
+                                                                                setpointMode:
+                                                                                    type: string
+                                                                                    description: Setpointmode of the device
+                                                                                    enum:
+                                                                                        - 'off'
+                                                                                        - heat
+                                                                                        - cool
+                                                                                        - 'on'
+                                                                                        - auto
+                                        - 
+                                            title: heatSetpointRange
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    required: true
+                                                    type: string
+                                                    description: Intent
+                                                    enum:
+                                                        - device.execute
+                                                    example: device.execute
+                                                commands:
+                                                    type: array
+                                                    items:
+                                                        type: object
+                                                        properties:
+                                                            commandRefId:
+                                                                type: string
+                                                                description: Command reference ID
+                                                                example: '1'
+                                                            ids:
+                                                                type: array
+                                                                description: Device ids
+                                                                items:
+                                                                    type: string
+                                                                    description: Device id
+                                                                example:
+                                                                    - '23'
+                                                            execution:
+                                                                type: array
+                                                                items:
+                                                                    type: object
+                                                                    properties:
+                                                                        command:
+                                                                            type: string
+                                                                            description: Command to be executed
+                                                                            enum:
+                                                                                - action.devices.commands.heatSetpointRange
+                                                                            example: action.devices.commands.heatSetpointRange
+                                                                        params:
+                                                                            type: object
+                                                                            example:
+                                                                                heatSetpointRange:
+                                                                                    heatSetpointMin: 10
+                                                                                    heatSetpointMax: 25
+                                                                            properties:
+                                                                                setpointRange:
+                                                                                    type: object
+                                                                                    properties:
+                                                                                        heatSetpointMin:
+                                                                                            type: number
+                                                                                            description: Minimum heat setpoint of the device
+                                                                                        heatSetpointMax:
+                                                                                            type: number
+                                                                                            description: Maximum heat setpoint of the device
+                                        - 
+                                            title: onOff
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    required: true
+                                                    type: string
+                                                    description: Intent
+                                                    enum:
+                                                        - device.execute
+                                                    example: device.execute
+                                                commands:
+                                                    type: array
+                                                    items:
+                                                        type: object
+                                                        properties:
+                                                            commandRefId:
+                                                                type: string
+                                                                description: Command reference ID
+                                                                example: '1'
+                                                            ids:
+                                                                type: array
+                                                                description: Device ids
+                                                                items:
+                                                                    type: string
+                                                                    description: Device id
+                                                                example:
+                                                                    - '23'
+                                                            execution:
+                                                                type: array
+                                                                items:
+                                                                    type: object
+                                                                    properties:
+                                                                        command:
+                                                                            type: string
+                                                                            description: Command to be executed
+                                                                            enum:
+                                                                                - action.devices.commands.onOff
+                                                                            example: action.devices.commands.onOff
+                                                                        params:
+                                                                            type: object
+                                                                            example:
+                                                                                onOff: 'on'
+                                                                            properties:
+                                                                                onOff:
+                                                                                    type: string
+                                                                                    description: On/Off state of the device
+                                                                                    enum:
+                                                                                        - 'on'
+                                                                                        - 'off'
+                                        - 
+                                            title: intensity
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    required: true
+                                                    type: string
+                                                    description: Intent
+                                                    enum:
+                                                        - device.execute
+                                                    example: device.execute
+                                                commands:
+                                                    type: array
+                                                    items:
+                                                        type: object
+                                                        properties:
+                                                            commandRefId:
+                                                                type: string
+                                                                description: Command reference ID
+                                                                example: '1'
+                                                            ids:
+                                                                type: array
+                                                                description: Device ids
+                                                                items:
+                                                                    type: string
+                                                                    description: Device id
+                                                                example:
+                                                                    - '23'
+                                                            execution:
+                                                                type: array
+                                                                items:
+                                                                    type: object
+                                                                    properties:
+                                                                        command:
+                                                                            type: string
+                                                                            description: Command to be executed
+                                                                            enum:
+                                                                                - action.devices.commands.intensity
+                                                                            example: action.devices.commands.intensity
+                                                                        params:
+                                                                            type: object
+                                                                            example:
+                                                                                intensity: 100
+                                                                                onOff: 'on'
+                                                                            properties:
+                                                                                intensity:
+                                                                                    type: number
+                                                                                    description: Intensity of the device
+                                                                                onOff:
+                                                                                    type: string
+                                                                                    description: On/Off state of the device (optional)
+                                                                                    enum:
+                                                                                        - 'on'
+                                                                                        - 'off'
+                                        - 
+                                            title: multiple commands and ids
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    required: true
+                                                    type: string
+                                                    description: Intent
+                                                    enum:
+                                                        - device.execute
+                                                    example: device.execute
+                                                commands:
+                                                    type: array
+                                                    items:
+                                                        type: object
+                                                        properties:
+                                                            commandRefId:
+                                                                type: string
+                                                                description: Command reference ID
+                                                                example: '1'
+                                                            ids:
+                                                                type: array
+                                                                description: Device ids
+                                                                items:
+                                                                    type: string
+                                                                    description: Device id
+                                                                example:
+                                                                    - '23'
+                                                                    - '52'
+                                                            execution:
+                                                                type: array
+                                                                example:
+                                                                    - 
+                                                                        command: action.devices.commands.setpointMode
+                                                                        params:
+                                                                            setpointMode: manual
+                                                                    - 
+                                                                        command: action.devices.commands.heatSetpoint
+                                                                        params:
+                                                                            heatSetpoint: 22
+                                                                items:
+                                                                    type: object
+                                                                    properties:
+                                                                        command:
+                                                                            type: string
+                                                                            description: Command to be executed
+                                                                            enum:
+                                                                                - action.devices.commands.intensity
+                                                                        params:
+                                                                            type: object
+                                                                            properties:
+                                                                                heatSetpoint:
+                                                                                    type: number
+                                                                                    description: Temperature heat setpoint of the device
+                                                                                setpointMode:
+                                                                                    type: string
+                                                                                    description: Setpointmode of the device
+                                        - 
+                                            title: scene
+                                            type: object
+                                            properties:
+                                                intent:
+                                                    required: true
+                                                    type: string
+                                                    description: Intent
+                                                    enum:
+                                                        - scene.execute
+                                                    example: scene.execute
+                                                ids:
+                                                    type: array
+                                                    description: Scene ids
+                                                    items:
+                                                        type: string
+                                                        description: Scene ids to be executed
+                                                    example:
+                                                        - '67'
+                    parameters:
+                        - 
+                            in: header
+                            name: Content-Type
+                            required: true
+                            style: simple
+                            explode: false
+                            schema:
+                                type: string
+                                enum:
+                                    - application/json
+                            description: MIME type of the request body
+                    responses:
+                        '200':
+                            description: ''
+                            content:
+                                application/json:
+                                    schema:
+                                        oneOf:
+                                            - 
+                                                title: heatSetpoint
+                                                type: object
+                                                properties:
+                                                    '23':
+                                                        type: object
+                                                        description: Device id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                enum:
+                                                                    - thermostat
+                                                                    - heatpump
+                                                                example: thermostat
+                                                            commands:
+                                                                type: object
+                                                                properties:
+                                                                    '1':
+                                                                        type: object
+                                                                        description: Command reference ID
+                                                                        properties:
+                                                                            action.devices.commands.heatSetpoint:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: SUCCESS
+                                                            states:
+                                                                type: object
+                                                                properties:
+                                                                    heatSetpoint:
+                                                                        type: number
+                                                                        description: Heat setpoint
+                                                                        example: 22
+                                                                    roomTemperatureDisplay:
+                                                                        type: number
+                                                                        description: Room temperature value
+                                                                        example: 22
+                                                                    heatSetpointMax:
+                                                                        type: number
+                                                                        description: Heat setpoint maximum
+                                                                        example: 36
+                                                                    heatSetpointMin:
+                                                                        type: number
+                                                                        description: Heat setpoint minimum
+                                                                        example: 5
+                                                                    setpointMode:
+                                                                        type: string
+                                                                        description: Setpoint mode
+                                                                        example: manual
+                                                                    outputPercentDisplay:
+                                                                        type: number
+                                                                        description: Output percent value
+                                                                        example: 0
+                                                                    temperatureFormat:
+                                                                        type: string
+                                                                        description: Temperature format
+                                                                        example: celsius
+                                            - 
+                                                title: setpointMode
+                                                type: object
+                                                properties:
+                                                    '23':
+                                                        type: object
+                                                        description: Device id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                enum:
+                                                                    - thermostat
+                                                                example: thermostat
+                                                            commands:
+                                                                type: object
+                                                                properties:
+                                                                    '1':
+                                                                        type: object
+                                                                        description: Command reference ID
+                                                                        properties:
+                                                                            action.devices.commands.setpointMode:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: SUCCESS
+                                                            states:
+                                                                type: object
+                                                                properties:
+                                                                    heatSetpoint:
+                                                                        type: number
+                                                                        description: Heat setpoint
+                                                                        example: 22
+                                                                    roomTemperatureDisplay:
+                                                                        type: number
+                                                                        description: Room temperature value
+                                                                        example: 22
+                                                                    heatSetpointMax:
+                                                                        type: number
+                                                                        description: Heat setpoint maximum
+                                                                        example: 36
+                                                                    heatSetpointMin:
+                                                                        type: number
+                                                                        description: Heat setpoint minimum
+                                                                        example: 5
+                                                                    setpointMode:
+                                                                        type: string
+                                                                        description: Setpoint mode
+                                                                        example: manual
+                                                                    outputPercentDisplay:
+                                                                        type: number
+                                                                        description: Output percent value
+                                                                        example: 0
+                                                                    temperatureFormat:
+                                                                        type: string
+                                                                        description: Temperature format
+                                                                        example: celsius
+                                            - 
+                                                title: heatSetpointRange
+                                                type: object
+                                                properties:
+                                                    '23':
+                                                        type: object
+                                                        description: Device id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                enum:
+                                                                    - thermostat
+                                                                    - heatpump
+                                                                example: thermostat
+                                                            commands:
+                                                                type: object
+                                                                properties:
+                                                                    '1':
+                                                                        type: object
+                                                                        description: Command reference ID
+                                                                        properties:
+                                                                            action.devices.commands.heatSetpointRange:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: SUCCESS
+                                                            states:
+                                                                type: object
+                                                                properties:
+                                                                    heatSetpoint:
+                                                                        type: number
+                                                                        description: Heat setpoint
+                                                                        example: 22
+                                                                    roomTemperatureDisplay:
+                                                                        type: number
+                                                                        description: Room temperature value
+                                                                        example: 22
+                                                                    heatSetpointMax:
+                                                                        type: number
+                                                                        description: Heat setpoint maximum
+                                                                        example: 36
+                                                                    heatSetpointMin:
+                                                                        type: number
+                                                                        description: Heat setpoint minimum
+                                                                        example: 5
+                                                                    setpointMode:
+                                                                        type: string
+                                                                        description: Setpoint mode
+                                                                        example: manual
+                                                                    outputPercentDisplay:
+                                                                        type: number
+                                                                        description: Output percent value
+                                                                        example: 0
+                                                                    temperatureFormat:
+                                                                        type: string
+                                                                        description: Temperature format
+                                                                        example: celsius
+                                            - 
+                                                title: onOff
+                                                type: object
+                                                properties:
+                                                    '23':
+                                                        type: object
+                                                        description: Device id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                enum:
+                                                                    - dimmer
+                                                                    - lightswitch
+                                                                    - loadcontroller
+                                                                    - heatpump
+                                                                    - outlet
+                                                                example: loadController
+                                                            commands:
+                                                                type: object
+                                                                properties:
+                                                                    '1':
+                                                                        type: object
+                                                                        description: Command reference ID
+                                                                        properties:
+                                                                            action.devices.commands.onOff:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: SUCCESS
+                                                            states:
+                                                                type: object
+                                                                properties:
+                                                                    onOff:
+                                                                        type: string
+                                                                        description: On/Off state
+                                                                        example: 'on'
+                                            - 
+                                                title: intensity
+                                                type: object
+                                                properties:
+                                                    '23':
+                                                        type: object
+                                                        description: Device id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                enum:
+                                                                    - dimmer
+                                                                example: dimmer
+                                                            commands:
+                                                                type: object
+                                                                properties:
+                                                                    '1':
+                                                                        type: object
+                                                                        description: Command reference ID
+                                                                        properties:
+                                                                            action.devices.commands.intensity:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: SUCCESS
+                                                            states:
+                                                                type: object
+                                                                properties:
+                                                                    onOff:
+                                                                        type: string
+                                                                        description: On/Off state
+                                                                        example: 'on'
+                                                                    intensity:
+                                                                        type: number
+                                                                        description: Intensity
+                                                                        example: 15
+                                            - 
+                                                title: response containing error
+                                                type: object
+                                                properties:
+                                                    '23':
+                                                        type: object
+                                                        description: Device id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                enum:
+                                                                    - thermostat
+                                                                example: thermostat
+                                                            commands:
+                                                                type: object
+                                                                properties:
+                                                                    '1':
+                                                                        type: object
+                                                                        description: Command reference ID
+                                                                        properties:
+                                                                            action.devices.commands.heatSetpoint:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: ERROR
+                                                                                    code:
+                                                                                        type: string
+                                                                                        description: Error code
+                                                                                        example: DVCUNVLB
+                                                                                    message:
+                                                                                        type: string
+                                                                                        description: Error message
+                                                                                        example: Device is disconnected
+                                                    '52':
+                                                        type: object
+                                                        description: Device id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                example: thermostat
+                                                            commands:
+                                                                type: object
+                                                                properties:
+                                                                    '1':
+                                                                        type: object
+                                                                        description: Command reference ID
+                                                                        properties:
+                                                                            action.devices.commands.heatSetpoint:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: SUCCESS
+                                                            states:
+                                                                type: object
+                                                                properties:
+                                                                    heatSetpoint:
+                                                                        type: number
+                                                                        description: Heat setpoint
+                                                                        example: 22
+                                                                    roomTemperatureDisplay:
+                                                                        type: number
+                                                                        description: Room temperature value
+                                                                        example: 22
+                                                                    heatSetpointMax:
+                                                                        type: number
+                                                                        description: Heat setpoint maximum
+                                                                        example: 36
+                                                                    heatSetpointMin:
+                                                                        type: number
+                                                                        description: Heat setpoint minimum
+                                                                        example: 5
+                                                                    setpointMode:
+                                                                        type: string
+                                                                        description: Setpoint mode
+                                                                        example: manual
+                                                                    outputPercentDisplay:
+                                                                        type: number
+                                                                        description: Output percent value
+                                                                        example: 0
+                                                                    temperatureFormat:
+                                                                        type: string
+                                                                        description: Temperature format
+                                                                        example: celsius
+                                            - 
+                                                title: scene
+                                                type: object
+                                                properties:
+                                                    '67':
+                                                        type: object
+                                                        description: Scene id
+                                                        properties:
+                                                            resources:
+                                                                type: string
+                                                                description: Resource type
+                                                                enum:
+                                                                    - scene
+                                                                example: scene
+                                                            devices:
+                                                                type: object
+                                                                properties:
+                                                                    '23':
+                                                                        type: object
+                                                                        properties:
+                                                                            actions.scene.setpointMode.off:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: ERROR
+                                                                                    code:
+                                                                                        type: string
+                                                                                        description: Error code
+                                                                                        example: DVCUNVLB
+                                                                                    message:
+                                                                                        type: string
+                                                                                        description: Error message
+                                                                                        example: Device is disconnected
+                                                                    '52':
+                                                                        type: object
+                                                                        properties:
+                                                                            actions.scene.setpointMode.off:
+                                                                                type: object
+                                                                                properties:
+                                                                                    status:
+                                                                                        type: string
+                                                                                        description: Status of the command
+                                                                                        example: SUCCESS
+                                                                                    states:
+                                                                                        type: object
+                                                                                        properties:
+                                                                                            setpointMode:
+                                                                                                type: string
+                                                                                                description: Setpoint mode
+                                                                                                example: 'off'
